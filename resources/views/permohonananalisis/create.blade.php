@@ -1,4 +1,4 @@
-<x-klarifikasilayout>
+<x-klarifikasi-layout>
     @push('styles')
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
@@ -644,4 +644,4 @@
             });
         </script>
     @endpush
-</x-klarifikasilayout>
+</x-klarifikasi-layout>

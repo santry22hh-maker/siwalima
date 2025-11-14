@@ -1,4 +1,4 @@
-<x-klarifikasilayout>
+<x-klarifikasi-layout>
     @push('styles')
         <style>
             /* ... (Semua style CSS DataTables Anda tetap di sini) ... */
@@ -127,4 +127,4 @@
             </script>
         @endpush
     </div>
-</x-klarifikasilayout>
+</x-klarifikasi-layout>

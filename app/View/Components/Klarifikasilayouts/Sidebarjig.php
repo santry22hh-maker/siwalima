@@ -1,13 +1,13 @@
 <?php
 
-namespace App\View\Components\klarifikasilayouts;
+namespace App\View\Components\Klarifikasilayouts;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use Illuminate\Support\Facades\Auth;
 
-class sidebarjig extends Component
+class Sidebarjig extends Component
 {
     
     public $links;

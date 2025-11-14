@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     {{-- 
       Gunakan Alpine.js untuk mengontrol halaman (step) 
       x-data="{ step: 1 }"
@@ -409,4 +409,4 @@
 
         </div>
     </div>
-    </x-jig-layout>
+</x-jig-layout>

@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     {{-- Memuat library Chart.js --}}
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -145,4 +145,4 @@
             });
         </script>
     @endpush
-</x-jiglayout>
+</x-jig-layout>

@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     <div class="px-2 mb-4 space-y-6"> {{-- space-y-6 ditambahkan untuk jarak antar kartu --}}
 
         {{-- Card 1: Detail Permohonan (Selalu Tampil) --}}
@@ -284,4 +284,4 @@
         </x-modal>
 
     </div>
-</x-jiglayout>
+</x-jig-layout>

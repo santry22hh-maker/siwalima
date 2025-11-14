@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
 
     <div class="max-w-2xl mx-auto mt-2 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
         <h1 class="text-2xl font-semibold text-green-700 mb-2">Layanan Pengaduan</h1>
@@ -44,4 +44,4 @@
             </div>
         </form>
     </div>
-</x-jiglayout>
+</x-jig-layout>

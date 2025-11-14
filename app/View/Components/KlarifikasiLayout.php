@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\klarifikasilayouts;
+namespace App\View\Components;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class breadcrumb extends Component
+class KlarifikasiLayout extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class breadcrumb extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.klarifikasilayouts.breadcrumb');
+        return view('klarifikasi.app');
     }
 }

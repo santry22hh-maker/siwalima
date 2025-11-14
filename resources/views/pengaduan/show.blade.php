@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     <div class="px-2 mb-4">
         {{-- Card 1: Detail Pengaduan (Selalu Tampil) --}}
         <div
@@ -188,4 +188,4 @@
             </div>
         @endif
     </div>
-</x-jiglayout>
+</x-jig-layout>

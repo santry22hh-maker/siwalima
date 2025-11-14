@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     @push('styles')
         {{-- CSS TinyMCE Fullscreen Z-index Fix --}}
         <style>
@@ -148,4 +148,4 @@
             });
         </script>
     @endpush
-</x-jiglayout>
+</x-jig-layout>

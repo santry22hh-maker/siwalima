@@ -1,4 +1,4 @@
-<x-klarifikasilayout>
+<x-klarifikasi-layout>
     @push('styles')
         <style>
             /* [STYLE CSS ANDA DARI SEBELUMNYA TETAP SAMA, TIDAK BERUBAH] */
@@ -328,10 +328,10 @@
 
             /* 2. Style KHUSUS untuk Kolom 1 (Keterangan) */
             /* #example tbody td:nth-child(1) {
-                            max-width: 300px;
-                            overflow: hidden;
-                            color: #6b7280;
-                            /* text-gray-500 */
+                                max-width: 300px;
+                                overflow: hidden;
+                                color: #6b7280;
+                                /* text-gray-500 */
             /* }  */
             /*  */
         </style>
@@ -444,4 +444,4 @@
             </script>
         @endpush
     </div>
-</x-klarifikasilayout>
+</x-klarifikasi-layout>

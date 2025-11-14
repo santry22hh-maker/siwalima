@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     @push('styles')
         {{-- Memuat file CSS DataTables kustom Anda --}}
         {{-- PASTIKAN PATH INI BENAR: 'css/datatable-custom.css' --}}
@@ -97,4 +97,4 @@
             });
         </script>
     @endpush
-</x-jiglayout>
+</x-jig-layout>

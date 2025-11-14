@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     @push('styles')
         {{-- CSS Kustom untuk DataTables (Disalin dari file daftarigt) --}}
         <style>
@@ -370,4 +370,4 @@
             });
         </script>
     @endpush
-</x-jiglayout>
+</x-jig-layout>

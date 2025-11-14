@@ -1,18 +1,16 @@
 <?php
 
-namespace App\View\Components\klarifikasilayouts;
+namespace App\View\Components\Inputdata;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class sidebarklarifikasi extends Component
+class Forminputdata extends Component
 {
     /**
      * Create a new component instance.
      */
-    public $links;
-
     public function __construct()
     {
         //
@@ -23,6 +21,6 @@ class sidebarklarifikasi extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.klarifikasilayouts.sidebarklarifikasi');
+        return view('components.inputdata.forminputdata');
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\inputdata;
+namespace App\View\Components\Klarifikasilayouts;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class forminputdata extends Component
+class Header extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class forminputdata extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.inputdata.forminputdata');
+        return view('components.klarifikasilayouts.header');
     }
 }

@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     @push('styles')
         <link rel="stylesheet" href="{{ asset('src/css/datatable-custom.css') }}">
     @endpush
@@ -106,4 +106,4 @@
             });
         </script>
     @endpush
-</x-jiglayout>
+</x-jig-layout>

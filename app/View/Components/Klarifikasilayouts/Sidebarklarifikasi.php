@@ -1,16 +1,18 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Klarifikasilayouts;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class klarifikasilayout extends Component
+class Sidebarklarifikasi extends Component
 {
     /**
      * Create a new component instance.
      */
+    public $links;
+
     public function __construct()
     {
         //
@@ -21,6 +23,6 @@ class klarifikasilayout extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('klarifikasi.app');
+        return view('components.klarifikasilayouts.sidebarklarifikasi');
     }
 }

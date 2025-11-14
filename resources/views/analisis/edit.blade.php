@@ -1,4 +1,4 @@
-<x-klarifikasilayout>
+<x-klarifikasi-layout>
     <x-slot name="header">
         <h2 class="font-semibold px- text-xl text-gray-800 leading-tight">
             Edit Laporan: {{ $laporan->slug }}
@@ -79,4 +79,4 @@
 
         </div>
     </div>
-</x-klarifikasilayout>
+</x-klarifikasi-layout>

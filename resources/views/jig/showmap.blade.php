@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     @push('styles')
         {{-- 1. STYLESHEET (Termasuk Fullscreen & Geolocation) --}}
         <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@latest/Control.FullScreen.css" />
@@ -328,4 +328,4 @@
             });
         </script>
     @endpush
-</x-jiglayout>
+</x-jig-layout>

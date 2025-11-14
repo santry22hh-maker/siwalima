@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     <div class="px-2 mb-4">
         {{-- Card Pesan Error --}}
         <div class="rounded-2xl border-4 border-red-300 bg-red-50 p-6 shadow-lg dark:border-red-700 dark:bg-red-900/30">
@@ -55,4 +55,4 @@
 
         </div>
     </div>
-</x-jiglayout>
+</x-jig-layout>

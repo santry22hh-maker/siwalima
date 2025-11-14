@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components\klarifikasilayouts;
+namespace App\View\Components\Klarifikasilayouts;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class sidebar extends Component
+class Sidebar extends Component
 {
     /**
      * Create a new component instance.

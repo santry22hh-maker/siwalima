@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     <div class="px-2 mb-4">
         <div
             class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 dark:border-gray-800 dark:bg-white/[0.03]">
@@ -162,4 +162,4 @@
 
         </div>
     </div>
-</x-jiglayout>
+</x-jig-layout>

@@ -1,4 +1,4 @@
-   <x-klarifikasilayout>
+   <x-klarifikasi-layout>
        <div class="space-y-5 sm:space-y-6 px-2">
            <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
                <div class="px-6 py-4">
@@ -62,4 +62,4 @@
                </div>
            </div>
        </div>
-   </x-klarifikasilayout>
+   </x-klarifikasi-layout>

@@ -1,4 +1,4 @@
-<x-klarifikasilayout>
+<x-klarifikasi-layout>
     <x-slot name="header">
         <h2 class="font-semibold px- text-xl text-gray-800 leading-tight">
             Detail Poligon: {{ $permohonan->id }}
@@ -240,4 +240,4 @@
         {{-- File JavaScript halaman ini (HAPUS 'defer') --}}
         <script src="{{ asset('src/js/page-analisis-show.js') }}"></script>
     @endpush
-</x-klarifikasilayout>
+</x-klarifikasi-layout>

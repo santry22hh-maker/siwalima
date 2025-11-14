@@ -1,4 +1,4 @@
-<x-jiglayout>
+<x-jig-layout>
     <div class="px-2 mb-4">
         <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-6"
             x-data="{ userType: '{{ old('tipe_pemohon', $permohonan->tipe_pemohon) }}' }"> {{-- 2. Isi x-data dengan data lama --}}
@@ -224,4 +224,4 @@
             </form>
         </div>
     </div>
-</x-jiglayout>
+</x-jig-layout>

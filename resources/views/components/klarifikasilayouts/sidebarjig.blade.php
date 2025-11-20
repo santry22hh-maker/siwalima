@@ -83,7 +83,7 @@
                                     @foreach ($link['submenu'] as $sublink)
                                         <li>
                                             <a href="{{ route($sublink['route']) }}"
-                                                class="menu-item group flex items-center rounded-lg px-3 py-4 text-sm"
+                                                class="menu-item group flex items-center rounded-lg px-3 py-2 text-sm"
                                                 :class="({{ $sublink['is_active'] ? 'true' : 'false' }}) ? 'menu-item-active' :
                                                 'menu-item-inactive'">
 

@@ -73,10 +73,18 @@
                 </button>
             </div>
             <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
-                <a class="flex items-center text-gray-700" href="#"
+                <a class="flex items-center text-gray-700 dark:text-white" href="#"
                     @click.prevent="dropdownOpen = ! dropdownOpen">
                     <span class="mr-3 h-8 w-8 overflow-hidden rounded-full">
-                        <img src="{{ asset('src/images/user/owner.jpg') }}" alt="User" />
+                        @if (Auth::user()->avatar_path)
+                            {{-- Tampilkan avatar yang di-upload jika ada --}}
+                            <img class="h-full w-full object-cover"
+                                src="{{ asset('storage/' . Auth::user()->avatar_path) }}" alt="User Avatar" />
+                        @else
+                            {{-- Tampilkan avatar default jika tidak ada --}}
+                            <img class="h-full w-full object-cover" src="{{ asset('src/images/user/owner.jpg') }}"
+                                alt="User Avatar" />
+                        @endif
                     </span>
                     <span class="text-theme-sm mr-1 block font-medium"> Hi, </span>
                     <span class="text-theme-sm mr-1 block font-bold"> {{ Auth::user()->name }} </span>

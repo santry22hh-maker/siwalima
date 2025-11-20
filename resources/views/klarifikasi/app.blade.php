@@ -44,8 +44,10 @@
             {{-- Komponen Blade ini HARUS menggunakan $store.sidebar.open dan $store.theme.isDark --}}
             <x-klarifikasilayouts.header />
             <main>
-                <x-klarifikasilayouts.breadcrumb />
-                {{ $slot }}
+                <div class="px-2 py-2 mb-2">
+                    {{-- <x-klarifikasilayouts.breadcrumb /> --}}
+                    {{ $slot }}
+                </div>
             </main>
         </div>
     </div>

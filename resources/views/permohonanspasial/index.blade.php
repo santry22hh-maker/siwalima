@@ -119,7 +119,7 @@
                     <a href="#" class="tab-btn" data-status="Tugas">
                         <i class="fas fa-exclamation-circle w-4 text-center"></i>
                         <span>
-                            @role('Admin')
+                            @role('Admin IGT')
                                 Tugas Anda (Pending/Verifikasi)
                             @else
                                 Tugas Anda (Diproses/Revisi)

@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 // Impor semua kelas yang kita butuhkan
-use App\Models\Permohonan;
 use App\Models\DataIgt;
 use App\Models\DetailPermohonan;
+use App\Models\Permohonan;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\DataTables;
-use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use ZipArchive;
 
 class PermohonanSpasialController extends Controller
@@ -31,7 +30,7 @@ class PermohonanSpasialController extends Controller
         'Kabupaten Kepulauan Tanimbar',
         'Kota Tual',
         'Kabupaten Maluku Barat Daya',
-        'Kota Ambon'
+        'Kota Ambon',
     ];
 
     /**
@@ -54,7 +53,7 @@ class PermohonanSpasialController extends Controller
             // --- Filter berdasarkan TAB STATUS ---
             $status = $request->get('status_filter');
 
-            if ($user->hasRole('Admin')) {
+            if ($user->hasRole('Admin IGT')) {
                 if ($status == 'Tugas') {
                     $query->whereIn('status', ['Pending', 'Menunggu Verifikasi Staf']);
                 } elseif ($status == 'Selesai') {
@@ -71,8 +70,8 @@ class PermohonanSpasialController extends Controller
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('nama_pemohon', function ($row) {
-                    return $row->nama_pemohon .
-                        '<br><small class="text-gray-500 dark:text-gray-400">' . $row->instansi . '</small>';
+                    return $row->nama_pemohon.
+                        '<br><small class="text-gray-500 dark:text-gray-400">'.$row->instansi.'</small>';
                 })
                 ->addColumn('tanggal_surat', function ($row) {
                     return Carbon::parse($row->tanggal_surat)->isoFormat('D MMMM YYYY');
@@ -90,6 +89,7 @@ class PermohonanSpasialController extends Controller
                     } elseif ($row->status == 'Selesai') {
                         return '<span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-300">Selesai</span>';
                     }
+
                     return $row->status;
                 })
                 ->addColumn('penelaah', function ($row) {
@@ -102,36 +102,45 @@ class PermohonanSpasialController extends Controller
                     $text = 'Lihat Detail'; // Default
 
                     // --- INI LOGIKA BARU UNTUK TOMBOL AKSI ---
-                    if ($user->hasRole('Admin')) {
-                        if ($row->status == 'Pending') $text = 'Disposisi Sekarang';
-                        if ($row->status == 'Menunggu Verifikasi Staf') $text = 'Verifikasi (Final)';
+                    if ($user->hasRole('Admin IGT')) {
+                        if ($row->status == 'Pending') {
+                            $text = 'Disposisi Sekarang';
+                        }
+                        if ($row->status == 'Menunggu Verifikasi Staf') {
+                            $text = 'Verifikasi (Final)';
+                        }
                     } elseif ($user->hasRole('Penelaah')) {
                         if ($row->penelaah_id == $user->id) {
-                            if ($row->status == 'Diproses') $text = 'Proses (Buat BA)'; // Teks baru
-                            if ($row->status == 'Menunggu Verifikasi Staf') $text = 'Verifikasi (Upload Final)';
+                            if ($row->status == 'Diproses') {
+                                $text = 'Proses (Buat BA)';
+                            } // Teks baru
+                            if ($row->status == 'Menunggu Verifikasi Staf') {
+                                $text = 'Verifikasi (Upload Final)';
+                            }
                         }
                     }
                     // --- AKHIR LOGIKA BARU ---
 
-                    $btn = '<a href="' . $showUrl . '" 
+                    $btn = '<a href="'.$showUrl.'" 
                                style="background-color: #3b82f6; color: white; padding: 4px 8px; border-radius: 0.25rem; font-size: 0.75rem; text-decoration: none;"
                                onmouseover="this.style.backgroundColor=\'#2563eb\'"
                                onmouseout="this.style.backgroundColor=\'#3b82f6\'">
-                               ' . $text . '
+                               '.$text.'
                             </a>';
 
-                    if ($user->hasRole('Admin')) {
+                    if ($user->hasRole('Admin IGT')) {
                         $deleteUrl = route('permohonanspasial.destroy', $row->id);
-                        $btn .= ' <form action="' . $deleteUrl . '" method="POST" class="inline" onsubmit="return confirm(\'Anda yakin ingin menghapus data ini?\');">'
-                            . csrf_field() . method_field('DELETE')
-                            . '<button type="submit" 
+                        $btn .= ' <form action="'.$deleteUrl.'" method="POST" class="inline" onsubmit="return confirm(\'Anda yakin ingin menghapus data ini?\');">'
+                            .csrf_field().method_field('DELETE')
+                            .'<button type="submit" 
                                    style="background-color: #ef4444; color: white; padding: 4px 8px; border-radius: 0.25rem; font-size: 0.75rem; border: none; cursor: pointer;"
                                    onmouseover="this.style.backgroundColor=\'#dc2626\'"
                                    onmouseout="this.style.backgroundColor=\'#ef4444\'">
                                    Hapus
                                 </button>'
-                            . '</form>';
+                            .'</form>';
                     }
+
                     return $btn;
                 })
                 ->rawColumns(['nama_pemohon', 'status', 'penelaah', 'action'])
@@ -159,7 +168,7 @@ class PermohonanSpasialController extends Controller
             return view('permohonanspasial.blocked', [
                 'tunggakan' => $laporanTertunggak,
                 'limit' => $limit,
-                'jenis_tunggakan' => 'Laporan Penggunaan Data'
+                'jenis_tunggakan' => 'Laporan Penggunaan Data',
             ]);
         }
 
@@ -173,7 +182,7 @@ class PermohonanSpasialController extends Controller
             return view('permohonanspasial.blocked', [
                 'tunggakan' => $surveyTertunggak,
                 'limit' => $limit,
-                'jenis_tunggakan' => 'Survey Kepuasan Pelayanan'
+                'jenis_tunggakan' => 'Survey Kepuasan Pelayanan',
             ]);
         }
 
@@ -185,7 +194,7 @@ class PermohonanSpasialController extends Controller
         return view('permohonanspasial.create', [
             'selectedIgt' => $selectedIgt,
             'cakupanOptions' => $this->cakupanOptions,
-            'jenisDataOptions' => $jenisDataOptions
+            'jenisDataOptions' => $jenisDataOptions,
         ]);
     }
 
@@ -235,7 +244,7 @@ class PermohonanSpasialController extends Controller
             'tanggal_surat' => $validated['tanggal_surat'],
             'perihal' => $validated['perihal'],
             'file_surat' => $filePath,
-            'status' => 'Pending'
+            'status' => 'Pending',
         ]);
 
         // ... (sisa logika 'foreach' Anda) ...
@@ -267,8 +276,8 @@ class PermohonanSpasialController extends Controller
         }
 
         $daftarPenelaah = [];
-        if ($user->hasRole('Admin') && $permohonan->status == 'Pending') {
-            $daftarPenelaah = User::role('Penelaah')->get();
+        if ($user->hasRole('Admin IGT') && $permohonan->status == 'Pending') {
+            $daftarPenelaah = User::role('Penelaah IGT')->get();
         }
 
         $permohonan->load('detailPermohonan.dataIgt', 'penelaah');
@@ -297,16 +306,28 @@ class PermohonanSpasialController extends Controller
      */
     public function destroy(Permohonan $permohonan)
     {
-        if (!Auth::user()->hasRole('Admin')) {
+        if (! Auth::user()->hasRole('Admin IGT')) {
             abort(403);
         }
 
-        if ($permohonan->file_surat) Storage::disk('public')->delete($permohonan->file_surat);
-        if ($permohonan->file_berita_acara) Storage::disk('public')->delete($permohonan->file_berita_acara);
-        if ($permohonan->file_ba_ttd) Storage::disk('public')->delete($permohonan->file_ba_ttd);
-        if ($permohonan->file_surat_balasan) Storage::disk('public')->delete($permohonan->file_surat_balasan);
-        if ($permohonan->file_data_final) Storage::disk('public')->delete($permohonan->file_data_final);
-        if ($permohonan->file_paket_final) Storage::disk('public')->delete($permohonan->file_paket_final);
+        if ($permohonan->file_surat) {
+            Storage::disk('public')->delete($permohonan->file_surat);
+        }
+        if ($permohonan->file_berita_acara) {
+            Storage::disk('public')->delete($permohonan->file_berita_acara);
+        }
+        if ($permohonan->file_ba_ttd) {
+            Storage::disk('public')->delete($permohonan->file_ba_ttd);
+        }
+        if ($permohonan->file_surat_balasan) {
+            Storage::disk('public')->delete($permohonan->file_surat_balasan);
+        }
+        if ($permohonan->file_data_final) {
+            Storage::disk('public')->delete($permohonan->file_data_final);
+        }
+        if ($permohonan->file_paket_final) {
+            Storage::disk('public')->delete($permohonan->file_paket_final);
+        }
 
         $permohonan->delete();
 
@@ -319,12 +340,12 @@ class PermohonanSpasialController extends Controller
     public function assign(Request $request, Permohonan $permohonan)
     {
         $validated = $request->validate([
-            'penelaah_id' => 'required|exists:users,id'
+            'penelaah_id' => 'required|exists:users,id',
         ]);
 
         $permohonan->update([
             'penelaah_id' => $validated['penelaah_id'],
-            'status' => 'Diproses'
+            'status' => 'Diproses',
         ]);
 
         return redirect()->route('permohonanspasial.index')
@@ -357,12 +378,12 @@ class PermohonanSpasialController extends Controller
         $tableRowsHtml = '';
         $nomor = 1;
         foreach ($permohonan->detailPermohonan as $detail) {
-            $tableRowsHtml .= '<tr style="text-align: left;">' .
-                '<td style="border: 1px solid black; padding: 8px; text-align: center;">' . $nomor++ . '</td>' .
-                '<td style="border: 1px solid black; padding: 8px;">' . e($detail->dataIgt->jenis_data ?? 'N/A') . '</td>' .
-                '<td style="border: 1px solid black; padding: 8px;">' . e($detail->cakupan_wilayah) . '</td>' .
-                '<td style="border: 1px solid black; padding: 8px;">' . e($detail->dataIgt->periode_update ?? '-') . '</td>' .
-                '<td style="border: 1px solid black; padding: 8px;">' . e($detail->dataIgt->format_data ?? 'N/A') . '</td>' .
+            $tableRowsHtml .= '<tr style="text-align: left;">'.
+                '<td style="border: 1px solid black; padding: 8px; text-align: center;">'.$nomor++.'</td>'.
+                '<td style="border: 1px solid black; padding: 8px;">'.e($detail->dataIgt->jenis_data ?? 'N/A').'</td>'.
+                '<td style="border: 1px solid black; padding: 8px;">'.e($detail->cakupan_wilayah).'</td>'.
+                '<td style="border: 1px solid black; padding: 8px;">'.e($detail->dataIgt->periode_update ?? '-').'</td>'.
+                '<td style="border: 1px solid black; padding: 8px;">'.e($detail->dataIgt->format_data ?? 'N/A').'</td>'.
                 '</tr>';
         }
 
@@ -390,7 +411,7 @@ class PermohonanSpasialController extends Controller
             // Ganti 'URL_LOGO_KEMENHUT' dengan path yang benar ke logo Anda
             // Pastikan file ini ada di 'public/src/images/logo/logo_kemenhut.png'
             'URL_LOGO_KEMENHUT' => $logoUrl,
-            'URL_LOGO_ISO' => $logoIsoUrl //
+            'URL_LOGO_ISO' => $logoIsoUrl, //
         ];
 
         $finalContent = str_replace(array_keys($placeholders), array_values($placeholders), $templateHtml);
@@ -424,26 +445,26 @@ class PermohonanSpasialController extends Controller
         if (file_exists($logoPath)) {
             $logoData = base64_encode(file_get_contents($logoPath));
             $logoType = mime_content_type($logoPath);
-            $base64Logo = 'data:' . $logoType . ';base64,' . $logoData;
+            $base64Logo = 'data:'.$logoType.';base64,'.$logoData;
 
             $finalContent = str_replace($logoUrl, $base64Logo, $finalContent);
             // dd($finalContent);
         } else {
             $finalContent = str_replace($logoUrl, '', $finalContent);
-            
+
         }
 
         if (file_exists($logoIsoPath)) {
             $logoIsoData = base64_encode(file_get_contents($logoIsoPath));
             $logoIsoType = mime_content_type($logoIsoPath);
-            $base64LogoIso = 'data:' . $logoIsoType . ';base64,' . $logoIsoData;
+            $base64LogoIso = 'data:'.$logoIsoType.';base64,'.$logoIsoData;
             // Penting: Ganti URL asset() yang mungkin sudah ada di konten TinyMCE
             $finalContent = str_replace($logoIsoUrl, $base64LogoIso, $finalContent);
         } else {
             $finalContent = str_replace($logoIsoUrl, '', $finalContent);
         }
 
-        $marginStyle = "
+        $marginStyle = '
         <style>
             @page {
                 margin: 1.5cm 1.5cm 2.5cm 1.5cm;
@@ -465,24 +486,24 @@ class PermohonanSpasialController extends Controller
                 width: auto;
                 opacity: 0.85;
             }
-        </style>";
+        </style>';
 
-            $footerHtml = '
+        $footerHtml = '
         <footer>
-            <img src="' . $base64LogoIso . '" alt="Logo ISO 9001:2015">
+            <img src="'.$base64LogoIso.'" alt="Logo ISO 9001:2015">
         </footer>
     ';
 
-        $finalHtmlForPdf = $marginStyle . $finalContent . $footerHtml;
+        $finalHtmlForPdf = $marginStyle.$finalContent.$footerHtml;
 
         $pdf = PDF::loadHTML($finalHtmlForPdf);
 
-        $namaFile = 'berita_acara/BA-' . $permohonan->id . '-' . time() . '.pdf';
+        $namaFile = 'berita_acara/BA-'.$permohonan->id.'-'.time().'.pdf';
         Storage::disk('public')->put($namaFile, $pdf->output());
 
         $permohonan->update([
             'file_berita_acara' => $namaFile,
-            'status' => 'Menunggu TTD Pengguna'
+            'status' => 'Menunggu TTD Pengguna',
         ]);
 
         return redirect()->route('permohonanspasial.index')->with('success', 'Berita Acara berhasil diarsipkan dan dikirim ke pengguna untuk TTD.');
@@ -520,9 +541,9 @@ class PermohonanSpasialController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        
+
         // === BUG 2 DIPERBAIKI: Izinkan Admin ATAU Penelaah yang ditugaskan ===
-        if ( !$user->hasRole('Admin') && $user->id != $permohonan->penelaah_id ) {
+        if (! $user->hasRole('Admin IGT') && $user->id != $permohonan->penelaah_id) {
             abort(403, 'Aksi tidak diizinkan.');
         }
 
@@ -538,11 +559,11 @@ class PermohonanSpasialController extends Controller
         }
 
         $zip = new ZipArchive;
-        $zipFileName = 'paket_final/PAKET_PERMOHONAN_' . $permohonan->id . '_' . time() . '.zip';
-        $zipPath = storage_path('app/public/' . $zipFileName);
+        $zipFileName = 'paket_final/PAKET_PERMOHONAN_'.$permohonan->id.'_'.time().'.zip';
+        $zipPath = storage_path('app/public/'.$zipFileName);
         Storage::disk('public')->makeDirectory('paket_final');
 
-        if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+        if ($zip->open($zipPath, ZipArchive::CREATE) === true) {
             $zip->addFile(Storage::disk('public')->path($finalDataPath), basename($finalDataPath));
             if ($suratBalasanPath) {
                 $zip->addFile(Storage::disk('public')->path($suratBalasanPath), basename($suratBalasanPath));
@@ -554,13 +575,12 @@ class PermohonanSpasialController extends Controller
             'file_data_final' => $finalDataPath,
             'file_surat_balasan' => $suratBalasanPath,
             'file_paket_final' => $zipFileName,
-            'status' => 'Selesai'
+            'status' => 'Selesai',
         ]);
-        
+
         return redirect()->route('permohonanspasial.index')
             ->with('success', 'Paket data final (ZIP) telah dibuat dan permohonan diselesaikan.');
     }
-
 
     // ===================================
     // === METHOD UNTUK PENGGUNA ===
@@ -601,8 +621,9 @@ class PermohonanSpasialController extends Controller
         $filePath = $request->file('file_ba_ttd')->store('ba_ttd', 'public');
         $permohonan->update([
             'file_ba_ttd' => $filePath,
-            'status' => 'Menunggu Verifikasi Staf'
+            'status' => 'Menunggu Verifikasi Staf',
         ]);
+
         return back()->with('success', 'Berita Acara (TTD) berhasil di-upload.');
     }
 

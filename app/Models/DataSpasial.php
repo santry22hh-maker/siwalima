@@ -26,6 +26,7 @@ class DataSpasial extends Model
         'shapefile_path',
         'photo_paths',
         'source_type',
+        'luas_ha',
     ];
 
     /**

@@ -21,7 +21,7 @@
                     @endrole
                 </div>
                 {{-- Tombol 'Tambah Data' hanya untuk Admin --}}
-                @role('Admin|Penelaah')
+                @role('Admin IGT|Penelaah IGT')
                     <div>
                         <a href="{{ route('daftarigt.create') }}"
                             class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-inset ring-brand-500 transition hover:bg-brand-600 dark:bg-brand-500 dark:text-white dark:ring-brand-500 dark:hover:bg-brand-600">

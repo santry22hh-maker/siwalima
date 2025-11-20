@@ -76,17 +76,25 @@
 
             {{-- === BLOK PROFIL PENGGUNA (YANG AKAN DIMODIFIKASI) === --}}
             <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
-                <a class="flex items-center text-gray-700" href="#"
+                <a class="flex items-center text-gray-700 dark:text-white" href="#"
                     @click.prevent="dropdownOpen = ! dropdownOpen">
                     <span class="mr-3 h-8 w-8 overflow-hidden rounded-full">
-                        <img src="{{ asset('src/images/user/owner.jpg') }}" alt="User" />
+                        @if (Auth::user()->avatar_path)
+                            {{-- Tampilkan avatar yang di-upload jika ada --}}
+                            <img class="h-full w-full object-cover"
+                                src="{{ asset('storage/' . Auth::user()->avatar_path) }}" alt="User Avatar" />
+                        @else
+                            {{-- Tampilkan avatar default jika tidak ada --}}
+                            <img class="h-full w-full object-cover" src="{{ asset('src/images/user/owner.jpg') }}"
+                                alt="User Avatar" />
+                        @endif
                     </span>
 
                     {{-- === INI ADALAH LOGIKA BARU === --}}
                     <span class="text-theme-sm block font-medium">
                         Hi,
                         {{-- Tampilkan Peran jika user adalah Staf --}}
-                        @if (Auth::user()->hasRole(['Admin', 'Penelaah', 'Pengguna']))
+                        @if (Auth::user()->hasRole(['Admin IGT', 'Penelaah IGT', 'Pengguna']))
                             <span class="font-bold">{{ ucfirst(Auth::user()->getRoleNames()->first()) }}</span>
                         @endif
                         {{-- Tampilkan Nama User --}}

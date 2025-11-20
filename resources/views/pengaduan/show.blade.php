@@ -34,7 +34,7 @@
         --}}
 
         {{-- A. FORM UNTUK PENELAAH (Status Diproses / Revisi) --}}
-        @if (in_array($pengaduan->status, ['Diproses', 'Revisi']) && Auth::user()->hasRole('Penelaah'))
+        @if (in_array($pengaduan->status, ['Diproses', 'Revisi']) && Auth::user()->hasRole('Penelaah IGT'))
 
             {{-- Jika ini adalah 'Revisi', tampilkan catatan dari Admin --}}
             @if ($pengaduan->status == 'Revisi' && $pengaduan->catatan_admin)
@@ -96,7 +96,7 @@
             </div>
 
             {{-- B. FORM UNTUK ADMIN (Status Menunggu Persetujuan) --}}
-        @elseif($pengaduan->status == 'Menunggu Persetujuan' && Auth::user()->hasRole('Admin'))
+        @elseif($pengaduan->status == 'Menunggu Persetujuan' && Auth::user()->hasRole('Admin IGT'))
             <div
                 class="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 dark:border-gray-800 dark:bg-white/[0.03]">
                 <h3

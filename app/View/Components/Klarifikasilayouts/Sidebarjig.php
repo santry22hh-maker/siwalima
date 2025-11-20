@@ -4,12 +4,11 @@ namespace App\View\Components\Klarifikasilayouts;
 
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\View\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\Component;
 
 class Sidebarjig extends Component
 {
-    
     public $links;
 
     public function __construct()
@@ -17,15 +16,17 @@ class Sidebarjig extends Component
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // -----------------------------------------------
-        // --- 1. LOGIKA SUBMENU LAYANAN PENGADUAN ---
-        // -----------------------------------------------
+        // Pastikan $links dideklarasi dulu untuk mencegah error
+        $links = [];
+
+        // ============================================================
+        // 1. SUBMENU LAYANAN PENGADUAN
+        // ============================================================
         $layananPengaduanSubmenu = [];
         $pengaduanActiveRoutes = [];
 
         if ($user) {
-            // --- Staf (Admin & Penelaah) ---
-            if ($user->hasRole(['Admin', 'Penelaah'])) {
+            if ($user->hasRole(['Admin IGT', 'Penelaah IGT', 'Admin Klarifikasi', 'Penelaah Klarifikasi'])) {
                 $layananPengaduanSubmenu[] = [
                     'name' => 'Daftar Pengaduan',
                     'route' => 'pengaduan.list',
@@ -33,7 +34,7 @@ class Sidebarjig extends Component
                 ];
                 $pengaduanActiveRoutes = ['pengaduan.list', 'pengaduan.show'];
             }
-            // --- Pengguna ---
+
             if ($user->hasRole('Pengguna')) {
                 $layananPengaduanSubmenu[] = [
                     'name' => 'Pengaduan Saya',
@@ -45,105 +46,125 @@ class Sidebarjig extends Component
                     'route' => 'pengaduan.index',
                     'is_active' => request()->routeIs('pengaduan.index'),
                 ];
-                $pengaduanActiveRoutes = array_merge($pengaduanActiveRoutes, ['pengaduan.saya', 'pengaduan.index']);
+                $pengaduanActiveRoutes = array_merge($pengaduanActiveRoutes, [
+                    'pengaduan.saya', 'pengaduan.index',
+                ]);
             }
         }
 
-        // -----------------------------------------------
-        // --- 2. LOGIKA SUBMENU PELAYANAN DATA IGT ---
-        // -----------------------------------------------
+        // ============================================================
+        // 2. SUBMENU PELAYANAN DATA IGT
+        // ============================================================
         $igtSubmenu = [];
         $igtSubmenuRoutes = [];
+
         $igtSubmenu[] = [
             'name' => 'Katalog Data IGT',
             'route' => 'daftarigt.index',
             'is_active' => request()->routeIs('daftarigt.index'),
         ];
         $igtSubmenuRoutes[] = 'daftarigt.index';
+
         if ($user) {
             if ($user->hasRole('Pengguna')) {
                 $igtSubmenu[] = [
-                    'name' => 'Permohonan Saya',
+                    'name' => 'Permohonan IGT Saya',
                     'route' => 'permohonanspasial.saya',
                     'is_active' => request()->routeIs('permohonanspasial.saya'),
                 ];
                 $igtSubmenu[] = [
-                    'name' => 'Laporan Penggunaan',
+                    'name' => 'Laporan Penggunaan IGT',
                     'route' => 'laporanpenggunaan.index',
                     'is_active' => request()->routeIs('laporanpenggunaan.index'),
                 ];
-                $igtSubmenuRoutes = array_merge($igtSubmenuRoutes, ['permohonanspasial.saya', 'laporanpenggunaan.index']);
+                $igtSubmenuRoutes = array_merge($igtSubmenuRoutes, [
+                    'permohonanspasial.saya', 'laporanpenggunaan.index',
+                ]);
             }
-            if ($user->hasRole(['Admin', 'Penelaah'])) {
+
+            if ($user->hasRole(['Admin IGT', 'Penelaah IGT', 'Admin Klarifikasi', 'Penelaah Klarifikasi'])) {
                 $igtSubmenu[] = [
-                    'name' => 'Daftar Permohonan',
+                    'name' => 'Daftar Permohonan IGT',
                     'route' => 'permohonanspasial.index',
                     'is_active' => request()->routeIs('permohonanspasial.index'),
                 ];
                 $igtSubmenu[] = [
-                    'name' => 'Review Laporan',
+                    'name' => 'Review Laporan IGT',
                     'route' => 'laporanpenggunaan.review',
                     'is_active' => request()->routeIs('laporanpenggunaan.review'),
                 ];
                 $igtSubmenu[] = [
-                    'name' => 'Monitoring Survey',
+                    'name' => 'Monitoring Survey IGT',
                     'route' => 'surveypenggunaan.index',
                     'is_active' => request()->routeIs('surveypenggunaan.index'),
                 ];
-                $igtSubmenuRoutes = array_merge($igtSubmenuRoutes, ['permohonanspasial.index', 'laporanpenggunaan.review', 'surveypenggunaan.index']);
+                $igtSubmenuRoutes = array_merge($igtSubmenuRoutes, [
+                    'permohonanspasial.index',
+                    'laporanpenggunaan.review',
+                    'surveypenggunaan.index',
+                ]);
             }
         }
 
-        // -----------------------------------------------
-        // --- 3. LOGIKA SUBMENU STATISTIK ---
-        // -----------------------------------------------
+        // ============================================================
+        // 3. SUBMENU STATISTIK
+        // ============================================================
         $statistikSubmenu = [];
         $statistikActiveRoutes = [];
-        if ($user && $user->hasRole(['Admin', 'Penelaah'])) {
+
+        if ($user && $user->hasRole(['Admin IGT', 'Penelaah IGT', 'Admin Klarifikasi', 'Penelaah Klarifikasi'])) {
             $statistikSubmenu[] = [
                 'name' => 'Statistik Layanan IGT',
                 'route' => 'statistik.igt',
                 'is_active' => request()->routeIs('statistik.igt'),
             ];
             $statistikSubmenu[] = [
-                'name' => 'Statistik Survey',
+                'name' => 'Statistik Survey IGT',
                 'route' => 'statistik.survey',
                 'is_active' => request()->routeIs('statistik.survey'),
             ];
             $statistikSubmenu[] = [
-                'name' => 'Statistik Pengaduan',
+                'name' => 'Statistik Pengaduan IGT',
                 'route' => 'statistik.pengaduan',
                 'is_active' => request()->routeIs('statistik.pengaduan'),
             ];
-            $statistikActiveRoutes = ['statistik.igt', 'statistik.survey', 'statistik.pengaduan'];
+
+            $statistikActiveRoutes = [
+                'statistik.igt',
+                'statistik.survey',
+                'statistik.pengaduan',
+            ];
         }
 
-        // -----------------------------------------------
-        // --- 4. (DIPERBARUI) LOGIKA SUBMENU MANAJEMEN AKUN ---
-        // -----------------------------------------------
-        $manajemenAkunSubmenu = []; // <-- Nama variabel diubah
-        $manajemenAkunActiveRoutes = []; // <-- Nama variabel diubah
+        // ============================================================
+        // 4. SUBMENU MANAJEMEN AKUN
+        // ============================================================
+        $manajemenAkunSubmenu = [];
+        $manajemenAkunActiveRoutes = [];
 
-        if ($user && $user->hasRole(['Admin', 'Penelaah'])) {
+        $allowedRoles = ['Admin IGT', 'Penelaah IGT', 'Admin Klarifikasi', 'Penelaah Klarifikasi'];
+
+        if ($user && $user->hasAnyRole($allowedRoles)) {
             $manajemenAkunSubmenu[] = [
-                'name' => 'Semua Akun', // <-- NAMA DIUBAH
+                'name' => 'Semua Akun Pengguna',
                 'route' => 'users.index',
                 'is_active' => request()->routeIs('users.*'),
             ];
             $manajemenAkunActiveRoutes[] = 'users.*';
         }
-        if ($user && $user->hasRole('Admin')) {
+
+        if ($user && $user->hasAnyRole($allowedRoles)) {
             $manajemenAkunSubmenu[] = [
-                'name' => 'Akun Penelaah', // <-- NAMA DIUBAH
+                'name' => 'Akun Penelaah',
                 'route' => 'penelaah.index',
                 'is_active' => request()->routeIs('penelaah.*'),
             ];
             $manajemenAkunActiveRoutes[] = 'penelaah.*';
         }
 
-        // -----------------------------------------------
-        // --- 5. ARRAY LINKS UTAMA (DIPERBARUI) ---
-        // -----------------------------------------------
+        // ============================================================
+        // 5. LINKS UTAMA
+        // ============================================================
         $links = [
             [
                 'name' => 'Home',
@@ -172,20 +193,22 @@ class Sidebarjig extends Component
                 'submenu' => $layananPengaduanSubmenu,
             ],
         ];
-
-        // Tambahkan menu Manajemen Akun (jika tidak kosong)
-        if (!empty($manajemenAkunSubmenu)) {
+        // ============================================================
+        // 6. TAMBAH MENU REKAP SURVEY (ADMIN/PENELAAH)
+        // ============================================================
+        if ($user && $user->hasRole(['Admin IGT', 'Penelaah IGT', 'Admin Klarifikasi', 'Penelaah Klarifikasi'])) {
             $links[] = [
-                'name' => 'Manajemen Akun', // <-- NAMA INDUK DIUBAH
-                'icon' => 'fas fa-users-cog fa-lg',
-                'is_active' => request()->routeIs($manajemenAkunActiveRoutes),
-                'is_dropdown' => true,
-                'submenu' => $manajemenAkunSubmenu, // <-- Submenu yang sudah diperbarui
+                'name' => 'Rekapitulasi Survey',
+                'icon' => 'fas fa-chart-line fa-lg',
+                'is_active' => request()->routeIs('survey.rekap.igt'),
+                'is_dropdown' => false,
+                'submenu' => [],
+                'route' => 'survey.rekap.igt',
             ];
         }
 
-        // Tambahkan menu Statistik (jika tidak kosong)
-        if (!empty($statistikSubmenu)) {
+        // Statistik
+        if (! empty($statistikSubmenu)) {
             $links[] = [
                 'name' => 'Statistik',
                 'icon' => 'fas fa-chart-bar fa-lg',
@@ -194,13 +217,20 @@ class Sidebarjig extends Component
                 'submenu' => $statistikSubmenu,
             ];
         }
+        // Manajemen Akun
+        if (! empty($manajemenAkunSubmenu)) {
+            $links[] = [
+                'name' => 'Manajemen Akun IGT',
+                'icon' => 'fas fa-users-cog fa-lg',
+                'is_active' => request()->routeIs($manajemenAkunActiveRoutes),
+                'is_dropdown' => true,
+                'submenu' => $manajemenAkunSubmenu,
+            ];
+        }
 
         $this->links = $links;
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     */
     public function render(): View|Closure|string
     {
         return view('components.klarifikasilayouts.sidebarjig');

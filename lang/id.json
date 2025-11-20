@@ -2,5 +2,9 @@
     "Log Out": "Keluar",
     "Dashboard": "Dasbor",
     "Profile": "Profil",
-    "My Application History":"Daftar Permohonan Data"
+    "My Application History":"Daftar Permohonan Data",
+    "This is a secure area of the application. Please confirm your password before continuing.":"Ini adalah area aman dari aplikasi. Silakan konfirmasi kata sandi Anda sebelum melanjutkan.",
+    "Confirm": "Konfirmasi",
+    "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.":"Lupa kata sandi Anda? Tidak masalah. Beri tahu kami alamat email Anda dan kami akan mengirimkan tautan pengaturan ulang kata sandi yang memungkinkan Anda memilih yang baru.",
+    "Kirim Tautan Atur Ulang Kata Sandi":"Email Password Reset Link"
 }

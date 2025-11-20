@@ -104,7 +104,7 @@
         @endif
 
         {{-- 1. FORM DISPOSISI (Hanya untuk Admin & jika Pending) --}}
-        @if ($permohonan->status == 'Pending' && Auth::user()->hasRole('Admin'))
+        @if ($permohonan->status == 'Pending' && Auth::user()->hasRole('Admin IGT'))
             <div
                 class="rounded-2xl border border-blue-300 bg-blue-50 p-4 shadow-sm sm:p-6 dark:border-blue-700 dark:bg-blue-900/20">
                 <h3
@@ -169,7 +169,7 @@
             {{-- 3. FORM VERIFIKASI (Staf & Menunggu Verifikasi) --}}
         @elseif (
             $permohonan->status == 'Menunggu Verifikasi Staf' &&
-                (Auth::user()->hasRole('Admin') || $permohonan->penelaah_id == Auth::id()))
+                (Auth::user()->hasRole('Admin IGT') || $permohonan->penelaah_id == Auth::id()))
             <div
                 class="rounded-2xl border border-yellow-300 bg-yellow-50 p-4 shadow-sm sm:p-6 dark:border-yellow-700 dark:bg-yellow-900/20">
                 <h3

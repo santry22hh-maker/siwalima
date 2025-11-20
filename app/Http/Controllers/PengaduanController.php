@@ -55,20 +55,24 @@ class PengaduanController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
+            $query = Pengaduan::where('category', 'UMUM')
+                ->with('user', 'penelaah');
+
             $user = Auth::user();
 
             // Ambil SEMUA data, tapi load relasi 'penelaah'
-            $data = Pengaduan::query()->with('penelaah');
+            // $data = Pengaduan::query()->with('penelaah');
 
-            return DataTables::of($data)
+            return DataTables::of($query)
                 ->addIndexColumn()
-                ->editColumn('pesan', fn($row) => Str::limit($row->pesan, 70))
+                ->editColumn('pesan', fn ($row) => Str::limit($row->pesan, 70))
 
                 // 1. TAMBAHKAN KOLOM PENELAAH
                 ->addColumn('penelaah_name', function ($row) {
                     if ($row->status == 'Baru') {
                         return '<span class="text-xs text-gray-500 italic">Belum ditangani</span>';
                     }
+
                     // Tampilkan nama penelaah jika ada
                     return $row->penelaah->name ?? '-';
                 })
@@ -104,11 +108,11 @@ class PengaduanController extends Controller
                 // 2. LOGIKA AKSI (TOMBOL) BARU
                 ->addColumn('action', function ($row) {
                     $user = Auth::user();
-                    $showUrl = route('pengaduan.show', $row->id);
+                    $showUrl = route('pengaduan.show', $row->kode_pelacakan);
                     $text = 'Lihat Detail'; // Default
 
                     // --- Logika Tombol untuk Penelaah ---
-                    if ($user->hasRole('Penelaah')) {
+                    if ($user->hasRole('Penelaah IGT')) {
                         if ($row->status == 'Baru') {
                             $text = 'Proses Pengaduan';
                         } elseif (in_array($row->status, ['Diproses', 'Revisi']) && $row->penelaah_id == $user->id) {
@@ -120,11 +124,11 @@ class PengaduanController extends Controller
                     }
 
                     // --- Logika Tombol untuk Admin ---
-                    if ($user->hasRole('Admin') && $row->status == 'Menunggu Persetujuan') {
+                    if ($user->hasRole('Admin IGT') && $row->status == 'Menunggu Persetujuan') {
                         $text = 'Review Persetujuan';
                     }
 
-                    return '<a href="' . $showUrl . '" class="text-indigo-600 ...">' . $text . '</a>';
+                    return '<a href="'.$showUrl.'" class="text-indigo-600 ...">'.$text.'</a>';
                 })
                 ->rawColumns(['status', 'action', 'penelaah_name']) // Tambahkan 'penelaah_name'
                 ->make(true);
@@ -141,7 +145,7 @@ class PengaduanController extends Controller
         $user = Auth::user();
 
         // --- LOGIKA KUNCI / LOCK ---
-        if ($user->hasRole('Penelaah')) {
+        if ($user->hasRole('Penelaah IGT')) {
             // 1. Klaim tiket 'Baru'
             if ($pengaduan->status == 'Baru') {
                 $pengaduan->update([
@@ -157,7 +161,6 @@ class PengaduanController extends Controller
             }
         }
         // --- AKHIR LOGIKA KUNCI ---
-
         // (Admin dan pemilik tiket yang sah bisa lanjut)
         $pengaduan->load('penelaah');
 
@@ -190,7 +193,7 @@ class PengaduanController extends Controller
     {
         $pengaduan->update([
             'status' => 'Selesai',
-            'catatan_admin' => 'Telah disetujui oleh ' . Auth::user()->name, // Catatan persetujuan
+            'catatan_admin' => 'Telah disetujui oleh '.Auth::user()->name, // Catatan persetujuan
         ]);
 
         // (Di sini Anda bisa menambahkan logika kirim email ke Pengguna)
@@ -227,6 +230,7 @@ class PengaduanController extends Controller
         // Pastikan Anda membuat file ini di Langkah 3
         return view('pengaduan.saya', compact('pengaduans'));
     }
+
     public function cancelComplaint(Pengaduan $pengaduan)
     {
         // Pastikan hanya pemilik yang bisa membatalkan
@@ -237,6 +241,7 @@ class PengaduanController extends Controller
         // Hanya bisa dibatalkan jika statusnya masih "Baru"
         if ($pengaduan->status == 'Baru') {
             $pengaduan->update(['status' => 'Dibatalkan']);
+
             return back()->with('success', 'Pengaduan telah berhasil dibatalkan.');
         }
 

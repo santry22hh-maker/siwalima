@@ -19,5 +19,7 @@
     "Batal":"Batal",
     "Tolak Permohonan":"Tolak Permohonan",
     "Kirim Revisi":"Kirim Revisi",
-    "+ Ajukan Permohonan Baru":"Ajukan Permohonan Baru"
+    "+ Ajukan Permohonan Baru":"Ajukan Permohonan Baru",
+    "This is a secure area of the application. Please confirm your password before continuing.":"Ini adalah area aman dari aplikasi. Silakan konfirmasi kata sandi Anda sebelum melanjutkan.",
+     "Kirim Tautan Atur Ulang Kata Sandi":"Email Password Reset Link"
 }

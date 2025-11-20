@@ -10,44 +10,36 @@ class SurveyPelayanan extends Model
     use HasFactory;
 
     /**
-     * Tentukan kolom yang bisa diisi.
+     * PERBAIKAN:
+     * Tentukan nama tabel secara eksplisit agar cocok dengan database Anda.
      */
-    protected $fillable = [
-        'permohonan_id',
-        'nama_lengkap',
-        'jenis_kelamin',
-        'pekerjaan',
-        'instansi',
-        'email',
-        'telepon',
-        'tanggal_pelayanan',
-        'kebutuhan_pelayanan',
-        'tujuan_penggunaan',
-        'pernah_layanan',
-        'info_layanan',
-        'cara_layanan',
-        'q_petugas_ditemui',
-        'q_petugas_dihubungi',
-        'q_kompetensi',
-        'q_kesopanan',
-        'q_info_jelas',
-        'q_syarat_sesuai',
-        'q_syarat_wajar',
-        'q_prosedur_mudah',
-        'q_waktu_cepat',
-        'q_biaya',
-        'q_hasil_sesuai',
-        'q_kualitas_rekaman',
-        'q_layanan_keseluruhan',
-        'q_sarpras',
-        'q_penanganan_pengaduan',
-        'kritik_saran',
-    ];
+    protected $table = 'survey_pelayanans';
 
     /**
-     * Konversi 'kebutuhan_pelayanan' dari JSON ke array dan sebaliknya.
+     * Izinkan mass assignment untuk semua kolom.
+     */
+    protected $guarded = [];
+
+    /**
+     * Cast kolom 'kebutuhan_pelayanan' sebagai array.
      */
     protected $casts = [
         'kebutuhan_pelayanan' => 'array',
     ];
+
+    /**
+     * Relasi ke Permohonan (jika digunakan nanti).
+     */
+    public function permohonan()
+    {
+        return $this->belongsTo(PermohonanAnalisis::class, 'permohonan_id');
+    }
+
+    /**
+     * Relasi ke User.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

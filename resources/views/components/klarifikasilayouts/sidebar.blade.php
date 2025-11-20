@@ -1,13 +1,12 @@
-{{-- Ganti @mouseenter/@mouseleave untuk memanggil fungsi hoverOpen/hoverClose --}}
 <aside @mouseenter="$store.sidebar.hoverOpen()" @mouseleave="$store.sidebar.hoverClose()"
     :class="$store.sidebar.open ? 'translate-x-0 lg:w-[290px]' : '-translate-x-full lg:translate-x-0 lg:w-[90px]'"
     class="sidebar fixed left-0 top-0 z-9999 flex h-screen flex-col overflow-y-hidden border-r border-gray-200 bg-white px-3 dark:border-gray-800 dark:bg-gray-900 lg:static transition-all duration-300">
 
     <div :class="$store.sidebar.open ? 'justify-between' : 'justify-center'"
-        class="flex items-center justify-center gap-2 pt-4 sidebar-header pb-7">
+        class="flex items-center justify-center gap-2 pt-4 sidebar-header pb-7 px-3">
 
         {{-- Logo saat sidebar terbuka (Gunakan x-show) --}}
-        <a href="index.html" class="flex justify-center w-full" x-show="$store.sidebar.open">
+        <a href="/" class="flex justify-center w-full" x-show="$store.sidebar.open">
             <span class="logo">
                 <img class="dark:hidden" src="{{ asset('src/images/logo/logo.png') }}" style="height: 36px"
                     alt="Logo" />
@@ -17,13 +16,12 @@
         </a>
 
         {{-- Logo Icon saat sidebar tertutup (Gunakan x-show) --}}
-        <a href="index.html" class="w-full flex justify-center" x-show="!$store.sidebar.open">
+        <a href="/" class="w-full flex justify-center" x-show="!$store.sidebar.open">
             <img class="logo-icon" src="{{ asset('src/images/logo/logo-icon.png') }}" style="height: 36px"
                 alt="Logo" />
         </a>
     </div>
     <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
-        {{-- Logika menu ini sudah benar menggunakan $link['is_active'] --}}
         <nav>
             <div>
                 <h3 class="mb-4 text-xs uppercase leading-[20px] text-gray-400"
@@ -47,7 +45,7 @@
                             {{-- INI ADALAH ITEM DROPDOWN --}}
                             <li x-data="{ open: false }">
                                 {{-- Tombol Parent --}}
-                                <a href="#" @click.prevent="open = !open" {{-- PERBAIKAN: Menghapus 'justify-between' --}}
+                                <a href="#" @click.prevent="open = !open"
                                     class="menu-item group flex items-center rounded-lg py-2 w-full"
                                     :class="[
                                         ({{ $link['is_active'] ? 'true' : 'false' }}) ? 'menu-item-active' :
@@ -55,19 +53,19 @@
                                         !$store.sidebar.open ? 'justify-center' : 'px-3'
                                     ]">
 
-                                    {{-- PERBAIKAN: Menghapus <div> wrapper --}}
+                                    {{-- === PERBAIKAN SINTAKSIS @class (1) === --}}
                                     <i class="{{ $link['icon'] }} w-6 text-center @class([
                                         'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300' => !$link[
                                             'is_active'
                                         ],
                                     ])">
                                     </i>
+
                                     <span class="menu-item-text ml-3"
                                         :class="$store.sidebar.open ? 'lg:inline' : 'lg:hidden'">
                                         {{ $link['name'] }}
                                     </span>
 
-                                    {{-- PERBAIKAN: Menambahkan 'ml-auto' untuk mendorong panah ke kanan --}}
                                     <span :class="$store.sidebar.open ? 'lg:inline ml-auto' : 'lg:hidden'">
                                         <svg class="h-4 w-4 transform transition-transform duration-200"
                                             :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24"
@@ -81,10 +79,11 @@
                                 {{-- Daftar Submenu --}}
                                 <ul x-show="open" x-transition class="mt-2 space-y-2"
                                     :class="$store.sidebar.open ? 'lg:pl-9' : 'lg:hidden'">
+
                                     @foreach ($link['submenu'] as $sublink)
                                         <li>
                                             <a href="{{ route($sublink['route']) }}"
-                                                class="menu-item group flex items-center rounded-lg px-3 py-4 text-sm"
+                                                class="menu-item group flex items-center rounded-lg px-3 py-2 text-sm"
                                                 :class="({{ $sublink['is_active'] ? 'true' : 'false' }}) ? 'menu-item-active' :
                                                 'menu-item-inactive'">
 
@@ -107,6 +106,7 @@
                                         !$store.sidebar.open ? 'justify-center' : 'px-3'
                                     ]">
 
+                                    {{-- === PERBAIKAN SINTAKSIS @class (2) === --}}
                                     <i class="{{ $link['icon'] }} w-6 text-center @class([
                                         'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300' => !$link[
                                             'is_active'

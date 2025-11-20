@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{{ 'SIWALIMA', config('app.name') }}</title>
-    <link rel="icon" href="{{ asset('logo-dark.ico') }}">
+    <link rel="icon" href="{{ asset('logo_bpkh.ico') }}">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 
     <!-- Styles / Scripts -->
@@ -27,6 +27,8 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </head>
 
 <body class="font-sans antialiased bg-gray-50 text-gray-900">
@@ -39,7 +41,7 @@
                     <a href="{{ url('/') }}" class="-m-1.5 p-1.5">
                         {{-- Teks untuk screen reader sekarang menggunakan span --}}
                         <span class="sr-only">SIGALIMA</span>
-                        <img src="{{ asset('src/images/logo/logo-icon.png') }}" alt="Logo" class="h-10 w-auto" />
+                        <img src="{{ asset('src/images/logo/logo-bpkh.png') }}" alt="Logo" class="h-10 w-auto" />
                     </a>
                 </div>
                 <div class="flex lg:hidden">
@@ -57,14 +59,38 @@
                 {{-- menu bar --}}
                 <div class="hidden lg:flex lg:gap-x-4">
                     <a href="/"
-                        class="text-white py-1 px-3 rounded hover:text-green-400 hover:rounded hover:bg-gray-100/30  transition duration-300">Beranda</a>
-                    <a href="klarifikasi/statistik"
+                        class="text-lg text-white py-1 px-3 rounded hover:text-green-400 hover:rounded hover:bg-gray-100/30 transition duration-300">
+                        Beranda
+                    </a>
+                    <a href="klarifikasi/input"
                         class="text-white py-1 px-3 rounded hover:text-green-400 hover:rounded hover:bg-gray-100/30 transition duration-300">
-                        Klarifikasi Kawasan Hutan</a>
+                        Klarifikasi Kawasan Hutan
+                    </a>
                     <a href="/spasial"
-                        class="text-white py-1 px-3 rounded hover:text-green-400 hover:rounded hover:bg-gray-100/30 transition duration-300">Informasi
-                        Geospasial</a>
+                        class="text-white py-1 px-3 rounded hover:text-green-400 hover:rounded hover:bg-gray-100/30 transition duration-300">
+                        Informasi Geospasial
+                    </a>
+
+                    <!-- Menu Publikasi dengan dropdown -->
+                    <div class="relative group">
+                        <button
+                            class="text-white py-1 px-3 rounded hover:text-green-400 hover:rounded hover:bg-gray-100/30 transition duration-300 flex items-center gap-1">
+                            Publikasi
+                            <svg class="w-4 h-4 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <!-- Dropdown -->
+                        <div
+                            class="absolute left-0 mt-1 w-48 bg-white rounded shadow-lg opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-10">
+                            <a href="/documents" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Dokumen
+                                Elektronik</a>
+                            <!-- Tambahkan submenu lain di sini jika perlu -->
+                        </div>
+                    </div>
                 </div>
+
                 {{-- drop down profile/menu --}}
                 <div class="hidden lg:flex lg:flex-1 lg:justify-end">
                     <div class="px-2 flex space-x-2">
@@ -131,7 +157,8 @@
                                     <span class="sr-only">Close menu</span>
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                         data-slot="icon" aria-hidden="true" class="size-6">
-                                        <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round"
+                                            stroke-linejoin="round" />
                                     </svg>
                                 </button>
                             </div>
@@ -140,12 +167,14 @@
                                     <div class="space-y-2 py-6">
                                         <a href="/"
                                             class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-white/5">Beranda</a>
-                                        <a href="/klarifikasi"
+                                        <a href="/klarifikasi/input"
                                             class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-white/5">Klarifikasi
                                             Kawasan Hutan</a>
                                         <a href="/spasial"
                                             class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-white/5">Informasi
                                             Geospasial</a>
+                                        <a href="/"
+                                            class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-white hover:bg-white/5">Publikasi</a>
                                     </div>
                                     {{-- PERBAIKAN: Ganti blok @if Anda dengan ini --}}
                                     <div class="py-6"> {{-- Memberi jarak pemisah --}}
@@ -201,7 +230,7 @@
             </el-dialog>
         </header>
 
-        <!-- Hero Section -->
+        {{-- <!-- Hero Section -->
         <section class="hero-bg relative">
             <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-75"></div>
             <div class="relative container mx-auto px-6 pt-48 pb-40 text-center text-white">
@@ -216,7 +245,7 @@
                 </p>
                 <div
                     class="flex flex-col items-center space-y-4 md:flex-row md:justify-center md:space-y-0 md:space-x-4">
-                    <a href="#"
+                    <a href="/interaktifmap"
                         class="bg-green-500 text-white py-4 px-8 rounded-full text-xl font-semibold hover:bg-green-600 transition duration-300 transform hover:scale-105">
                         Jelajahi Peta &rarr;
                     </a>
@@ -226,89 +255,210 @@
                     </a>
                 </div>
             </div>
-        </section>
-        <!-- Features Section -->
-        <section class="py-24 bg-gray-50">
-            <div class="container mx-auto px-6 text-center">
-                <h2 class="text-5xl font-bold text-gray-800 mb-6">Fitur Unggulan SIGALIMA</h2>
-                <p class="text-gray-600 max-w-3xl mx-auto text-lg">
-                    Solusi komprehensif untuk pengelolaan data kehutanan dengan teknologi geospasial terdepan
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-16">
-                    <!-- Feature 1 -->
-                    <div
-                        class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
-                        <div class="text-5xl text-green-500 mb-6">🗺️</div>
-                        <h3 class="text-black text-2xl font-bold mb-3">Peta Interaktif</h3>
-                        <p class="text-gray-600">Visualisasi data kawasan hutan, penutupan lahan, dan izin PPKH dalam
-                            format GeoJSON yang interaktif dan real-time.</p>
-                    </div>
-                    <!-- Feature 2 -->
-                    <div
-                        class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
-                        <div class="text-5xl text-green-500 mb-6">📸</div>
-                        <h3 class="text-black text-2xl font-bold mb-3">Analisis Foto GPS</h3>
-                        <p class="text-gray-600">Upload foto dengan metadata GPS untuk analisis otomatis lokasi
-                            terhadap
-                            kawasan hutan dan tata guna lahan.</p>
-                    </div>
-                    <!-- Feature 3 -->
-                    <div
-                        class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
-                        <div class="text-5xl text-green-500 mb-6">📊</div>
-                        <h3 class="text-black text-2xl font-bold mb-3">Laporan Analisis</h3>
-                        <p class="text-gray-600">Dapatkan laporan komprehensif hasil analisis spasial dengan data
-                            kawasan
-                            hutan dan izin terkait.</p>
-                    </div>
-                    <!-- Feature 4 -->
-                    <div
-                        class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
-                        <div class="text-5xl text-green-500 mb-6">🌳</div>
-                        <h3 class="text-black text-2xl font-bold mb-3">Data Kehutanan</h3>
-                        <p class="text-gray-600">Akses lengkap data kawasan hutan lindung, produksi, dan konservasi
-                            berdasarkan SK Menteri LHK terbaru.</p>
-                    </div>
-                    <!-- Feature 5 -->
-                    <div
-                        class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
-                        <div class="text-5xl text-green-500 mb-6">⚙️</div>
-                        <h3 class="text-black text-2xl font-bold mb-3">Pengajuan Permohonan</h3>
-                        <p class="text-gray-600">Permohonan telaah dan klarifikasi kawasan hutan, submitting permohonan
-                            secara online</p>
-                    </div>
-                    <!-- Feature 6 -->
-                    <div
-                        class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
-                        <div class="text-5xl text-green-500 mb-6">🔗</div>
-                        <h3 class="text-black text-2xl font-bold mb-3">API GeoJSON</h3>
-                        <p class="text-gray-600">Akses data melalui REST API dalam format GeoJSON untuk integrasi
-                            dengan
-                            sistem eksternal.</p>
+        </section> --}}
+
+        <div class="relative w-full h-[500px] lg:h-[600px] group">
+
+            <div class="swiper mySwiper w-full h-full">
+                <div class="swiper-wrapper">
+                    @forelse($carousels as $slide)
+                        <div class="swiper-slide relative w-full h-full block">
+
+                            <div class="absolute inset-0 w-full h-full">
+                                <img src="{{ asset('storage/' . $slide->image_path) }}" alt="{{ $slide->title }}"
+                                    class="w-full h-full object-cover">
+
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent">
+                                </div>
+                            </div>
+
+                            <div
+                                class="relative z-10 h-full flex items-end pb-16 md:pb-24 container mx-auto px-4 lg:px-12">
+                                <div class="max-w-4xl text-left">
+                                    <h2
+                                        class="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight drop-shadow-lg animate-fade-in-up">
+                                        {{ $slide->title }}
+                                    </h2>
+                                    <p
+                                        class="text-gray-200 text-lg md:text-xl mb-8 leading-relaxed drop-shadow-md max-w-2xl">
+                                        {{ $slide->description }}
+                                    </p>
+
+                                    @if ($slide->link_url)
+                                        <a href="{{ $slide->link_url }}"
+                                            class="inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:-translate-y-1 shadow-lg">
+                                            Baca Selengkapnya
+                                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                            </svg>
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="swiper-slide relative w-full h-full flex items-center justify-center bg-gray-800">
+                            <div class="text-center text-white">
+                                <h2 class="text-2xl font-bold">Data Carousel Kosong</h2>
+                                <p>Silakan isi data di database.</p>
+                            </div>
+                        </div>
+                    @endforelse
+                </div>
+
+                <div class="swiper-button-next !text-white/70 hover:!text-white transition"></div>
+                <div class="swiper-button-prev !text-white/70 hover:!text-white transition"></div>
+
+                <div class="swiper-pagination !bottom-8"></div>
+
+            </div>
+
+
+            <!-- Features Section -->
+            <section class="py-10 bg-gray-50">
+                <div class="container mx-auto px-6 text-center">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-2">Fitur Unggulan SIGALIMA</h2>
+                    <p class="text-gray-600 max-w-3xl mx-auto text-lg">
+                        Solusi komprehensif untuk pengelolaan data kehutanan dengan teknologi geospasial terdepan
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-6">
+                        <!-- Feature 1 -->
+                        <div
+                            class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
+                            <div class="text-5xl text-green-500 mb-6">🗺️</div>
+                            <h3 class="text-black text-2xl font-bold mb-3">Peta Interaktif</h3>
+                            <p class="text-gray-600">Visualisasi data kawasan hutan, penutupan lahan, dan izin PPKH
+                                dalam
+                                format GeoJSON yang interaktif dan real-time.</p>
+                        </div>
+                        <!-- Feature 2 -->
+                        <div
+                            class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
+                            <div class="text-5xl text-green-500 mb-6">📸</div>
+                            <h3 class="text-black text-2xl font-bold mb-3">Analisis Foto GPS</h3>
+                            <p class="text-gray-600">Upload foto dengan metadata GPS untuk analisis otomatis lokasi
+                                terhadap
+                                kawasan hutan dan tata guna lahan.</p>
+                        </div>
+                        <!-- Feature 3 -->
+                        <div
+                            class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
+                            <div class="text-5xl text-green-500 mb-6">📊</div>
+                            <h3 class="text-black text-2xl font-bold mb-3">Laporan Analisis</h3>
+                            <p class="text-gray-600">Dapatkan laporan komprehensif hasil analisis spasial dengan data
+                                kawasan
+                                hutan dan izin terkait.</p>
+                        </div>
+                        <!-- Feature 4 -->
+                        <div
+                            class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
+                            <div class="text-5xl text-green-500 mb-6">🌳</div>
+                            <h3 class="text-black text-2xl font-bold mb-3">Data Kehutanan</h3>
+                            <p class="text-gray-600">Akses lengkap data kawasan hutan lindung, produksi, dan konservasi
+                                berdasarkan SK Menteri LHK terbaru.</p>
+                        </div>
+                        <!-- Feature 5 -->
+                        <div
+                            class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
+                            <div class="text-5xl text-green-500 mb-6">⚙️</div>
+                            <h3 class="text-black text-2xl font-bold mb-3">Pengajuan Permohonan</h3>
+                            <p class="text-gray-600">Permohonan telaah dan klarifikasi kawasan hutan, submitting
+                                permohonan
+                                secara online</p>
+                        </div>
+                        <!-- Feature 6 -->
+                        <div
+                            class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-500">
+                            <div class="text-5xl text-green-500 mb-6">🔗</div>
+                            <h3 class="text-black text-2xl font-bold mb-3">API GeoJSON</h3>
+                            <p class="text-gray-600">Akses data melalui REST API dalam format GeoJSON untuk integrasi
+                                dengan
+                                sistem eksternal.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
-        <!-- CTA Section -->
-        <section class="bg-green-600 text-white">
-            <div class="container mx-auto px-6 py-24 text-center">
-                <h2 class="text-5xl font-bold mb-6">Siap Memulai Analisis Kehutanan?</h2>
-                <p class="max-w-3xl mx-auto text-lg mb-10">
-                    Bergabunglah dengan SIGALIMA dan rasakan kemudahan pengelolaan data kehutanan dengan teknologi
-                    geospasial terdepan.
-                </p>
-                <div
-                    class="flex flex-col items-center space-y-4 md:flex-row md:justify-center md:space-y-0 md:space-x-4">
-                    <a href="#"
-                        class="bg-white text-green-600 py-4 px-12 rounded-full text-xl font-semibold hover:bg-gray-200 transition duration-300 transform hover:scale-105">
-                        Daftar Sekarang
-                    </a>
-                    <a href="#"
-                        class="border-2 border-white text-white py-4 px-7 rounded-full text-xl font-semibold hover:bg-white hover:text-green-600 transition duration-300 transform hover:scale-105">
-                        Pelajari Lebih Lanjut
+            </section>
+
+            {{-- News Feed --}}
+            <section class="py-16 bg-gray-50">
+                <div class="container mx-auto px-4 max-w-6xl">
+
+                    <div class="flex justify-between items-end mb-10">
+                        <div>
+                            <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Berita & Artikel</h2>
+                            <div class="h-1 w-20 bg-green-600 mt-3 rounded-full"></div>
+                        </div>
+                        <a href="#"
+                            class="hidden md:flex items-center text-green-700 font-semibold hover:text-green-800 transition">
+                            Lihat Semua Berita
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        @forelse($news as $item)
+                            <div
+                                class="bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 transform hover:-translate-y-2 group">
+
+                                <div class="relative h-52 overflow-hidden">
+                                    <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->title }}"
+                                        class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
+
+                                    <div
+                                        class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-green-800 shadow-sm">
+                                        {{ \Carbon\Carbon::parse($item->published_at)->format('d M Y') }}
+                                    </div>
+                                </div>
+
+                                <div class="p-6">
+                                    <h3
+                                        class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-green-700 transition">
+                                        {{ $item->title }}
+                                    </h3>
+
+                                    <p class="text-gray-600 text-sm line-clamp-3 mb-4">
+                                        {{ Str::limit(strip_tags($item->content), 100) }}
+                                    </p>
+
+                                    <a href="#"
+                                        class="inline-flex items-center text-green-600 font-semibold text-sm hover:text-green-800 transition group/link">
+                                        Selengkapnya
+                                        <svg class="w-4 h-4 ml-1 transform transition-transform group-hover/link:translate-x-1"
+                                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="col-span-3 text-center py-10 text-gray-500">
+                                Belum ada berita terbaru.
+                            </div>
+                        @endforelse
+                    </div>
+
+                </div>
+                <div class="mt-12 text-center">
+                    <p class="text-gray-500 mb-4 text-sm">Ingin melihat kegiatan kami lainnya?</p>
+
+                    <a href="{{ route('news.index') }}"
+                        class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-green-700 hover:bg-green-800 md:text-lg md:px-10 shadow-lg transform hover:-translate-y-1 transition duration-300">
+                        Jelajahi Semua Berita
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
                     </a>
                 </div>
-            </div>
+
+        </div>
         </section>
         <!-- Footer -->
         <footer class="bg-gray-900 text-white">
@@ -320,17 +470,41 @@
             </div>
         </footer>
     </div>
+
+    <!-- Script untuk efek header scroll -->
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        var swiper = new Swiper(".mySwiper", {
+            loop: true, // Looping terus menerus
+            effect: "fade", // Efek memudar (lebih elegan untuk hero)
+            speed: 1000, // Kecepatan transisi
+            autoplay: {
+                delay: 5000, // Ganti slide setiap 5 detik
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+    </script>
+    <script>
+        window.addEventListener("scroll", function() {
+            const header = document.getElementById("header");
+            if (window.scrollY > 50) {
+                header.classList.add("bg-gray-900/90", "backdrop-blur-sm");
+            } else {
+                header.classList.remove("bg-gray-900/90", "backdrop-blur-sm");
+            }
+        });
+    </script>
+
 </body>
-<!-- Script untuk efek header scroll -->
-<script>
-    window.addEventListener("scroll", function() {
-        const header = document.getElementById("header");
-        if (window.scrollY > 50) {
-            header.classList.add("bg-gray-900/90", "backdrop-blur-sm");
-        } else {
-            header.classList.remove("bg-gray-900/90", "backdrop-blur-sm");
-        }
-    });
-</script>
+
 
 </html>

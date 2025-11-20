@@ -2,16 +2,9 @@
 
 namespace App\Http\Controllers;
 
-// MODEL BARU
-use App\Models\PermohonanAnalisis;
-use App\Models\DataSpasial;
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 
 class KlarifikasiDashboardController extends Controller
 {
@@ -22,6 +15,7 @@ class KlarifikasiDashboardController extends Controller
     {
         return view('klarifikasi.index');
     }
+
     public function statistik()
     {
         return view('klarifikasi.statistik');
@@ -29,16 +23,15 @@ class KlarifikasiDashboardController extends Controller
 
     /**
      * Menampilkan form input mandiri
-     * (Fungsi ini harus mengirim $dataDasarFiles agar blade Anda berfungsi)
      */
     public function input()
     {
-        // Blade Anda (klarifikasi.input.blade.php) melakukan fetch
-        // ke DataDasar dan memanggil style dari map_styles.js.
-        // Kita HARUS mengirimkan variabel ini.
+        // Blade Anda (klarifikasi.input.blade.php) memanggil 'map_styles.js'
+        // dan melakukan 'fetch' ke 'DataDasar'. Kita HARUS menyediakan data
+        // yang sama di sini agar JavaScript tidak error.
         $styleMapping = [
             'KwsHutan_Maluku250.geojson' => 'styleKawasanHutan',
-            'Pl2023_Maluku250.geojson'   => 'stylePL2023',
+            'Pl2023_Maluku250.geojson' => 'stylePL2023',
         ];
 
         $dataDasarPath = public_path('DataDasar');
@@ -49,7 +42,7 @@ class KlarifikasiDashboardController extends Controller
                 $filename = $file->getFilename();
                 $dataDasarFiles[] = [
                     'name' => $filename,
-                    'url'  => asset('DataDasar/' . $filename),
+                    'url' => asset('DataDasar/'.$filename),
                     'style_function' => $styleMapping[$filename] ?? '',
                 ];
             }
@@ -59,95 +52,82 @@ class KlarifikasiDashboardController extends Controller
     }
 
     /**
-     * ======================================================
-     * FUNGSI STORE YANG DISESUAIKAN
-     * ======================================================
-     * Menyimpan data dari 'klarifikasi.input.blade.php' ke tabel BARU
+     * Memproses data mandiri TANPA menyimpan ke database.
      */
-    public function store(Request $request)
+    public function prosesAnalisis(Request $request)
     {
         // 1. Validasi Input (Sesuai form Anda)
         $validated = $request->validate([
-            'lokasi' => 'required|string|max:255',
-            'kabupaten' => 'required|string|max:255',
-            'keterangan' => 'nullable|string',
+            // 'lokasi' => 'required|string|max:255',
+            // 'kabupaten' => 'required|string|max:255',
+            // 'keterangan' => 'nullable|string',
             'geojson_data' => 'required|json',
             'source_type' => 'required|string|in:shapefile,photo,manual',
             'shapefile_input' => 'required_if:source_type,shapefile|file|mimes:zip|max:10240',
             'photos' => 'required_if:source_type,photo|array',
-            'photos.*' => 'image|mimes:jpeg,jpg',
-            'userid' => 'nullable|string', // <-- Dari Blade Anda
-            'groupid' => 'nullable|string', // <-- Dari Blade Anda
+            // 'photos.*' => 'image|mimes:jpeg,jpg|max:10240',
+            // 'userid' => 'nullable|string',
+            // 'groupid' => 'nullable|string',
         ]);
 
-        // dd($validated); // <-- Debug Anda sekarang akan berjalan
+        // 2. Ambil GeoJSON yang diinput
+        $incomingJson = json_decode($validated['geojson_data']);
+        $geometry = $incomingJson->geometry ?? $incomingJson; // Dapatkan objek geometrinya
 
-        // 2. Inisialisasi Data
-        $geometry = json_decode($validated['geojson_data']);
-        $groupId = $validated['groupid'] ?? Str::uuid();
-        $shapefilePath = null;
-        $photoPaths = null;
-        $disk = 'public';
+        // 3. Buat "Objek Permohonan Palsu" (stdClass)
+        $permohonan = new \stdClass;
+        $permohonan->id = 'N/A'; // ID Palsu untuk header
+        $permohonan->slug = 'mandiri-'.Str::uuid();
+        // $permohonan->keterangan = $validated['keterangan'];
+        $permohonan->created_at = now();
+        $permohonan->status = 'Draft';
+        // $permohonan->form_userid = $validated['userid'];
+        // $permohonan->form_groupid = $validated['groupid'];
 
-        // 3. Simpan File Spasial
-        if ($validated['source_type'] === 'shapefile' && $request->hasFile('shapefile_input')) {
-            $shapefilePath = $request->file('shapefile_input')->store("analisis_mandiri/{$groupId}", $disk);
-        }
-        if ($validated['source_type'] === 'photo' && $request->hasFile('photos')) {
-            $paths = [];
-            foreach ($request->file('photos') as $photo) {
-                $path = $photo->store("analisis_mandiri/{$groupId}", $disk);
-                $paths[] = $path;
-            }
-            $photoPaths = json_encode($paths);
-        }
+        // Buat objek spasial palsu
+        $permohonan->dataSpasial = new \stdClass;
+        // $permohonan->dataSpasial->nama_areal = $validated['lokasi'];
+        // $permohonan->dataSpasial->kabupaten = $validated['kabupaten'];
+        $permohonan->dataSpasial->geojson_path = $validated['source_type'].'.geojson';
 
-        // 4. Buat dan Simpan File GeoJSON
+        // 4. Buat String GeoJSON Feature LENGKAP untuk dikirim ke view
         $feature = [
             'type' => 'Feature',
             'properties' => [
-                'nama_areal' => $validated['lokasi'],
-                'groupid' => $groupId, // Menyimpan groupid lama di properti GeoJSON
-                'kabupaten' => $validated['kabupaten'],
-                'userid' => $validated['userid'], // Menyimpan userid lama di properti GeoJSON
+                // 'nama_areal' => $validated['lokasi'],
             ],
-            'geometry' => $geometry,
+            'geometry' => $geometry, // Gunakan objek geometri yang sudah diekstrak
         ];
-        $geojsonFileName = $groupId . '_spasial.geojson';
-        $geojsonDbPath = "analisis_mandiri/{$groupId}/" . $geojsonFileName;
-        Storage::disk($disk)->put($geojsonDbPath, json_encode($feature, JSON_PRETTY_PRINT));
 
-        // 5. Simpan Entitas ke Database (dalam Transaksi)
-        try {
-            DB::transaction(function () use ($validated, $geometry, $geojsonDbPath, $shapefilePath, $photoPaths, $groupId) {
+        // ======================================================
+        //      PERBAIKAN: Ubah $usulanGeoJson menjadi string
+        // ======================================================
+        // Ini adalah string JSON yang akan dikirim ke view
+        $usulanGeoJson = json_encode($feature);
 
-                // A. Buat PermohonanAnalisis (Tabel Utama)
-                $permohonan = PermohonanAnalisis::create([
-                    'user_id' => Auth::id(), // ID pengguna yang login
-                    'tipe' => 'MANDIRI',
-                    'status' => 'Draft',
-                    'keterangan' => $validated['keterangan'],
-                    'form_userid' => $validated['userid'], // <-- Menyimpan userid dari form
-                    'form_groupid' => $groupId, // <-- Menyimpan groupid dari form/buatan
-                ]);
-
-                // B. Buat DataSpasial (Tabel Pelayan)
-                DataSpasial::create([
-                    'permohonananalisis_id' => $permohonan->id,
-                    'nama_areal' => $validated['lokasi'],
-                    'kabupaten' => $validated['kabupaten'],
-                    'coordinates' => json_encode($geometry->coordinates),
-                    'geojson_path' => $geojsonDbPath,
-                    'shapefile_path' => $shapefilePath,
-                    'photo_paths' => $photoPaths,
-                    'source_type' => $validated['source_type'],
-                ]);
-            });
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal menyimpan data: ' . $e->getMessage())->withInput();
+        // 5. Ambil Data Dasar (Wajib untuk halaman analisis.show)
+        $styleMapping = [
+            'KwsHutan_Maluku250.geojson' => 'styleKawasanHutan',
+            'Pl2023_Maluku250.geojson' => 'stylePL2023',
+        ];
+        $dataDasarPath = public_path('DataDasar');
+        $dataDasarFiles = [];
+        if (File::exists($dataDasarPath)) {
+            foreach (File::files($dataDasarPath) as $file) {
+                $filename = $file->getFilename();
+                $dataDasarFiles[] = [
+                    'name' => $filename,
+                    'url' => asset('DataDasar/'.$filename),
+                    'style_function' => $styleMapping[$filename] ?? '',
+                ];
+            }
         }
 
-        // 6. Redirect ke halaman tabel "Data Saya" (data.list)
-        return redirect()->route('data.list')->with('success', 'Data analisis mandiri berhasil disimpan!');
+        // 6. Kembalikan View Analisis
+        return view('analisis.show', compact(
+            'permohonan',
+            'usulanGeoJson', // <-- $usulanGeoJson sekarang adalah STRING
+            'dataDasarFiles'
+        ));
     }
 }

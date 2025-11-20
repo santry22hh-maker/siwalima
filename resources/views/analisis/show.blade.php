@@ -175,7 +175,10 @@
 
                     {{-- 5. KOTAK TOMBOL AKSI (PDF, dll) --}}
 
-                    <div id="nextSteps" class="hidden  flex-row items-center gap-3">
+                    {{-- 5. KOTAK TOMBOL AKSI (PDF, dll) --}}
+
+                    {{-- 1. Ubah parent <div> menjadi 'flex' (bukan 'flex-col') --}}
+                    <div id="nextSteps" class="flex flex-row items-center gap-3">
 
                         {{-- 2. Tambahkan 'flex-1' ke tombol --}}
                         <button id="btnDownloadPdf"
@@ -187,7 +190,7 @@
                             {{-- 3. Tambahkan 'flex-1' ke link --}}
                             <a href="{{ route('permohonananalisis.create', ['from_slug' => $permohonan->slug]) }}"
                                 id="btnAjukan"
-                                class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-gray-200 px-4 py-3 text-sm font-sm text-gray-700 shadow-theme-xs transition hover:bg-gray-50">
+                                class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-gray-700 px-4 py-3 text-xs font-medium text-white shadow-theme-xs transition hover:bg-gray-800">
                                 <i class="fas fa-paper-plane"></i> Ajukan Permohonan Resmi
                             </a>
                         @else
